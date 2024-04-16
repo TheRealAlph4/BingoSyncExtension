@@ -31,6 +31,6 @@ VariableProxy.Increment(varName, value);
 VariableProxy.TrackVariable(varName);
 // after this, any Get and Update operations on the variable will be logged to ModLog.txt
 // to stop tracking a variable, use
-VariableProxy.TntrackVariable(varName);
+VariableProxy.UntrackVariable(varName);
 // note: redundant calls to either function will be quietly ignored
 ```
