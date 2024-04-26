@@ -361,5 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/BingoSyncExtension/BingoSyncExtension.csproj
-/BingoSyncExtension/BingoSyncExtension.csproj
