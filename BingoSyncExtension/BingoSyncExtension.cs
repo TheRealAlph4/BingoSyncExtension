@@ -7,7 +7,7 @@ namespace BingoSyncExtension
     public class BingoSyncExtension : Mod
     {
         new public string GetName() => "BingoSyncExtension";
-        public override string GetVersion() => "1.0";
+        public override string GetVersion() => "1.1";
         public override int LoadPriority() => 0;
 
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
