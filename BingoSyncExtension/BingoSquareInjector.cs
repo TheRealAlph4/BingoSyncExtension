@@ -55,7 +55,7 @@ namespace BingoSyncExtension
             _conditionConditionsField = _conditionObjType.GetField("Conditions");
         }
 
-    public static void InjectSquares(List<LocalBingoSquare> squares)
+        public static void InjectSquares(List<LocalBingoSquare> squares)
         {
             FieldInfo allSquaresField = _bingoTrackerType.GetField("_allPossibleSquares", BindingFlags.NonPublic | BindingFlags.Static);
             IList allSquaresList = (IList) allSquaresField.GetValue(null);
