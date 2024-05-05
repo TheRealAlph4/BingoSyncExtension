@@ -1,6 +1,7 @@
 ﻿using MagicUI.Elements;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 
 namespace BingoSyncExtension
@@ -20,15 +21,21 @@ namespace BingoSyncExtension
         public static void Generate(Button sender)
         {
             Log("Generate button clicked");
-            NewCardClient.JoinRoom();
-            while (NewCardClient.GetState() == NewCardClient.State.Loading)
-            {
-                Log("Loading...");
+            Thread boardSenderThread = new(() => {
+                NewCardClient client = new();
+                client.JoinRoom();
+                while (client.GetState() == NewCardClient.State.Loading)
+                {
+                    Log("Loading...");
+                    Thread.Sleep(500);
+                }
+                client.ChatMessage($"{client.nickname} generated Custom board");
                 Thread.Sleep(100);
-            }
-            NewCardClient.NewCard(GameMode.GetErrorBoard());
-            Thread.Sleep(1000);
-            NewCardClient.ExitRoom();
+                client.NewCard(GameMode.GetErrorBoard());
+                Thread.Sleep(1000);
+                client.ExitRoom();
+            });
+            boardSenderThread.Start();
         }
     }
 }

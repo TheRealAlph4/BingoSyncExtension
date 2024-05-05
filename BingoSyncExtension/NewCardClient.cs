@@ -10,34 +10,30 @@ using System.Threading;
 
 namespace BingoSyncExtension
 {
-    public static class NewCardClient
+    public class NewCardClient
     {
         public enum State
         {
             None, Disconnected, Connected, Loading
         };
 
-        public static string room = "yMRj9t7cTHu6btTyYwtDSA";
-        public static string password = "slow";
-        public static string nickname = "Board Generator";
-        public static string color = "navy";
+        public string room = "yMRj9t7cTHu6btTyYwtDSA";
+        public string password = "slow";
+        public string nickname = "Board Generator";
 
-        public static List<BoardSquare> board = null;
-        public static bool isHidden = true;
+        private CookieContainer cookieContainer = null;
+        private HttpClientHandler handler = null;
+        private HttpClient client = null;
+        private ClientWebSocket webSocketClient = null;
 
-        private static CookieContainer cookieContainer = null;
-        private static HttpClientHandler handler = null;
-        private static HttpClient client = null;
-        private static ClientWebSocket webSocketClient = null;
+        private State forcedState = State.None;
+        private WebSocketState lastSocketState = WebSocketState.None;
 
-        private static State forcedState = State.None;
-        private static WebSocketState lastSocketState = WebSocketState.None;
+        private bool shouldConnect = false;
 
-        private static bool shouldConnect = false;
+        private int maxRetries = 5;
 
-        private static int maxRetries = 5;
-
-        public static void Setup()
+        public NewCardClient()
         {
             cookieContainer = new CookieContainer();
             handler = new HttpClientHandler();
@@ -51,7 +47,7 @@ namespace BingoSyncExtension
             webSocketClient = new ClientWebSocket();
         }
 
-        public static State GetState()
+        public State GetState()
         {
             if (forcedState != State.None)
                 return forcedState;
@@ -62,7 +58,7 @@ namespace BingoSyncExtension
             return State.Disconnected;
         }
 
-        private static void LoadCookie()
+        private void LoadCookie()
         {
             RetryHelper.RetryWithExponentialBackoff(() =>
             {
@@ -88,7 +84,7 @@ namespace BingoSyncExtension
             }, maxRetries, nameof(LoadCookie));
         }
 
-        public static void JoinRoom()
+        public void JoinRoom()
         {
             if (GetState() == State.Loading)
             {
@@ -108,7 +104,6 @@ namespace BingoSyncExtension
             var task = client.PostAsync("api/join-room", content);
             _ = task.ContinueWith(responseTask =>
             {
-                Exception ex = null;
                 try
                 {
                     var response = responseTask.Result;
@@ -117,12 +112,12 @@ namespace BingoSyncExtension
                     readTask.ContinueWith(joinRoomResponse =>
                     {
                         var socketJoin = JsonConvert.DeserializeObject<SocketJoin>(joinRoomResponse.Result);
+                        ConnectToBroadcastSocket(socketJoin);
                     });
                 }
                 catch (Exception _ex)
                 {
-                    ex = _ex;
-                    Console.WriteLine($"could not join room: {ex.Message}");
+                    Console.WriteLine($"could not join room: {_ex.Message}");
                 }
                 finally
                 {
@@ -131,7 +126,7 @@ namespace BingoSyncExtension
             });
         }
 
-        public static void ExitRoom()
+        public void ExitRoom()
         {
             shouldConnect = false;
             forcedState = State.Loading;
@@ -153,7 +148,7 @@ namespace BingoSyncExtension
             });
         }
 
-        public static void NewCard(string customJSON, bool lockout = false, bool hideCard = true)
+        public void NewCard(string customJSON, bool lockout = false, bool hideCard = true)
         {
             var newCard = new NewCard
             {
@@ -170,6 +165,50 @@ namespace BingoSyncExtension
             var task = client.PostAsync("api/new-card", content);
             _ = task.ContinueWith(responseTask => {});
         }
+
+        public void ChatMessage(string text)
+        {
+            var setColorInput = new ChatMessage
+            {
+                Room = room,
+                Text = text,
+            };
+            RetryHelper.RetryWithExponentialBackoff(() =>
+            {
+                var payload = JsonConvert.SerializeObject(setColorInput);
+                var content = new StringContent(payload, Encoding.UTF8, "application/json");
+                var task = client.PutAsync("api/chat", content);
+                return task.ContinueWith(responseTask =>
+                {
+                    var response = responseTask.Result;
+                    response.EnsureSuccessStatusCode();
+                });
+            }, maxRetries, nameof(ChatMessage));
+        }
+
+        public void ConnectToBroadcastSocket(SocketJoin socketJoin)
+        {
+            var socketUri = new Uri("wss://sockets.bingosync.com/broadcast");
+            RetryHelper.RetryWithExponentialBackoff(() =>
+            {
+                webSocketClient = new ClientWebSocket();
+                var connectTask = webSocketClient.ConnectAsync(socketUri, CancellationToken.None);
+                return connectTask.ContinueWith(connectResponse =>
+                {
+                    if (connectResponse.Exception != null)
+                    {
+                        Console.WriteLine($"error connecting to websocket: {connectResponse.Exception}");
+                        throw connectResponse.Exception;
+                    }
+
+                    Console.WriteLine($"connected to the socket, sending socketJoin object");
+                    var serializedSocketJoin = JsonConvert.SerializeObject(socketJoin);
+                    var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(serializedSocketJoin));
+                    var sendTask = webSocketClient.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                    sendTask.ContinueWith(_ => {});
+                });
+            }, maxRetries, nameof(ConnectToBroadcastSocket));
+        }
     }
 
     [DataContract]
@@ -181,17 +220,6 @@ namespace BingoSyncExtension
         public string Nickname;
         [JsonProperty("password")]
         public string Password;
-    }
-
-    [DataContract]
-    public class BoardSquare
-    {
-        [JsonProperty("name")]
-        public string Name = string.Empty;
-        [JsonProperty("colors")]
-        public string Colors = string.Empty;
-        [JsonProperty("slot")]
-        public string Slot = string.Empty;
     }
 
     [DataContract]
@@ -219,4 +247,14 @@ namespace BingoSyncExtension
         [JsonProperty("hide_card")]
         public bool HideCard;
     }
+ 
+    [DataContract]
+    public class ChatMessage
+    {
+        [JsonProperty("room")]
+        public string Room;
+        [JsonProperty("text")]
+        public string Text;
+    }
+
 }
