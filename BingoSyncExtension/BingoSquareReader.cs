@@ -30,8 +30,7 @@ namespace BingoSyncExtension
         }
         public static List<LocalBingoSquare> ReadFromFile(string filepath)
         {
-            List<LocalBingoSquare> squares = new();
-            string contents = File.ReadAllText(filepath);
+            List<LocalBingoSquare> squares = [];
             using (StreamReader reader = new(filepath))
             using (JsonTextReader jsonReader = new(reader))
             {

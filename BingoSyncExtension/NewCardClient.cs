@@ -1,30 +1,26 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.WebSockets;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace BingoSyncExtension
 {
-    public static class SendBoardAPI
+    public static class NewCardClient
     {
         public enum State
         {
             None, Disconnected, Connected, Loading
         };
 
-        public static string room = "";
-        public static string password = "";
-        public static string nickname = "";
-        public static string color = "";
+        public static string room = "yMRj9t7cTHu6btTyYwtDSA";
+        public static string password = "slow";
+        public static string nickname = "Board Generator";
+        public static string color = "navy";
 
         public static List<BoardSquare> board = null;
         public static bool isHidden = true;
@@ -38,8 +34,6 @@ namespace BingoSyncExtension
         private static WebSocketState lastSocketState = WebSocketState.None;
 
         private static bool shouldConnect = false;
-
-        public static List<Action> BoardUpdated;
 
         private static int maxRetries = 5;
 
@@ -55,17 +49,6 @@ namespace BingoSyncExtension
             LoadCookie();
 
             webSocketClient = new ClientWebSocket();
-
-            BoardUpdated = new List<Action>();
-        }
-
-        public static void Update()
-        {
-            if (webSocketClient.State == lastSocketState)
-                return;
-            BoardUpdated.ForEach(f => f());
-            forcedState = State.None;
-            lastSocketState = webSocketClient.State;
         }
 
         public static State GetState()
@@ -105,7 +88,7 @@ namespace BingoSyncExtension
             }, maxRetries, nameof(LoadCookie));
         }
 
-        public static void JoinRoom(Action<Exception> callback)
+        public static void JoinRoom()
         {
             if (GetState() == State.Loading)
             {
@@ -143,22 +126,43 @@ namespace BingoSyncExtension
                 }
                 finally
                 {
-                    callback(ex);
                     forcedState = State.None;
                 }
             });
         }
 
-        public static void NewCard(string customJSON, bool lockout = true, bool hideCard = true)
+        public static void ExitRoom()
+        {
+            shouldConnect = false;
+            forcedState = State.Loading;
+            RetryHelper.RetryWithExponentialBackoff(() =>
+            {
+                return webSocketClient.CloseAsync(WebSocketCloseStatus.NormalClosure, "exiting room", CancellationToken.None).ContinueWith(result =>
+                {
+                    if (result.Exception != null)
+                    {
+                        throw result.Exception;
+                    }
+                    webSocketClient = new ClientWebSocket();
+                    forcedState = State.None;
+                });
+            }, maxRetries, nameof(ExitRoom), () =>
+            {
+                webSocketClient = new ClientWebSocket();
+                forcedState = State.None;
+            });
+        }
+
+        public static void NewCard(string customJSON, bool lockout = false, bool hideCard = true)
         {
             var newCard = new NewCard
             {
                 Room = room,
-                Game = 18,
-                Variant = 18,
+                Game = 18, // this is supposed to be custom alread
+                Variant = 18, // but this is also required for custom ???
                 CustomJSON = customJSON,
-                Lockout = lockout,
-                Seed = "1",
+                Lockout = lockout, // false is lockout here for some godforsaken reason
+                Seed = "",
                 HideCard = hideCard,
             };
             var payload = JsonConvert.SerializeObject(newCard);

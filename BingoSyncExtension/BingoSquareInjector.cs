@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace BingoSyncExtension
@@ -55,18 +56,23 @@ namespace BingoSyncExtension
             _conditionConditionsField = _conditionObjType.GetField("Conditions");
         }
 
-        public static void InjectSquares(List<LocalBingoSquare> squares)
+        public static Dictionary<string, BingoGoal> ProcessGoalsFile(string filepath)
         {
+            Dictionary<string, BingoGoal> goals = [];
+            List<LocalBingoSquare> squares = BingoSquareReader.ReadFromFile(filepath);
             FieldInfo allSquaresField = _bingoTrackerType.GetField("_allPossibleSquares", BindingFlags.NonPublic | BindingFlags.Static);
             IList allSquaresList = (IList) allSquaresField.GetValue(null);
 
             foreach (LocalBingoSquare square in squares)
             {
+                goals.Add(square.Name, new BingoGoal(square.Name, []));
                 allSquaresList.Add(ConvertSquare(square));
             }
 
             allSquaresField.SetValue(null, allSquaresList);
             Log($"Added {squares.Count} new squares");
+            
+            return goals;
         }
 
         private static object ConvertSquare(LocalBingoSquare square)
