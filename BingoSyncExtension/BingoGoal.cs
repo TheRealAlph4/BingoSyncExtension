@@ -6,6 +6,13 @@ namespace BingoSyncExtension
     {
         public string name;
         public List<string> exclusions;
+
+        public BingoGoal(string name)
+        {
+            this.name = name;
+            this.exclusions = new();
+        }
+
         public BingoGoal(string name, List<string> exclusions)
         {
             this.name = name;
