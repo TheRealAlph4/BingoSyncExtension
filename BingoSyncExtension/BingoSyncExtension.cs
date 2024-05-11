@@ -17,6 +17,7 @@ namespace BingoSyncExtension
             VariableProxy.Setup(Log);
             GameModesManager.Setup(Log);
             MenuUI.Setup();
+
             Log("Initialized");
         }
     }
