@@ -21,6 +21,7 @@ namespace BingoSyncExtension
         {
             Log = log;
             SetupVanillaGoals();
+            _gameModes.Add(new GameMode("Vanilla", _vanillaGoals));
         }
         public static void AddGameMode(GameMode gameMode)
         {

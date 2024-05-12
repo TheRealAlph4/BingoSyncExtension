@@ -25,8 +25,8 @@ namespace BingoSyncExtension
         private static Button GenerateBoardButton;
         private static List<Button> GameModeButtons = [];
 
-        private static int buttonSize = 173;
-        private static int inputSize = buttonSize * 3 + 20;
+        private static readonly int buttonSize = 173;
+        private static readonly int inputSize = buttonSize * 3 + 20;
 
         private static bool GenerationUiVisible = true;
 
@@ -90,6 +90,7 @@ namespace BingoSyncExtension
             }
             buttonLayout.Children.Insert(0, row);
             layout.Children.Insert(0, buttonLayout);
+            SelectGameMode(GameModeButtons[0]);
         }
 
         public static Button CreateGameModeButton(string name)
@@ -105,6 +106,7 @@ namespace BingoSyncExtension
             return button;
 
         }
+
         public static void SelectGameMode(Button sender)
         {
             GameModesManager.SetActiveGameMode(sender.Name);
@@ -114,6 +116,7 @@ namespace BingoSyncExtension
             }
             sender.BorderColor = Color.red;
         }
+
         public static void SetUIVisible(bool visible)
         {
             GenerationUiVisible = visible;
