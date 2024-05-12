@@ -5,6 +5,7 @@ using Settings;
 using System.Collections.Generic;
 using Modding.Converters;
 using InControl;
+using UnityEngine;
 
 
 namespace BingoSyncExtension
@@ -107,6 +108,11 @@ namespace BingoSyncExtension
         public static void SelectGameMode(Button sender)
         {
             GameModesManager.SetActiveGameMode(sender.Name);
+            foreach(Button gameMode in GameModeButtons)
+            {
+                gameMode.BorderColor = Color.white;
+            }
+            sender.BorderColor = Color.red;
         }
         public static void SetUIVisible(bool visible)
         {
