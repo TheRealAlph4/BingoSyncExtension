@@ -21,7 +21,7 @@ namespace BingoSyncExtension
         {
             return name;
         }
-        public string GenerateBoard()
+        virtual public string GenerateBoard()
         {
             List<BingoGoal> board = [];
             List<BingoGoal> availableGoals = new(goals.Values);
