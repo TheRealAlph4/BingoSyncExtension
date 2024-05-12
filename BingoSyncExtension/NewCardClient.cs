@@ -17,8 +17,6 @@ namespace BingoSyncExtension
             None, Disconnected, Connected, Loading
         };
 
-        public string room = "yMRj9t7cTHu6btTyYwtDSA";
-        public string password = "slow";
         public string nickname = "Board Generator";
 
         private CookieContainer cookieContainer = null;
@@ -27,9 +25,6 @@ namespace BingoSyncExtension
         private ClientWebSocket webSocketClient = null;
 
         private State forcedState = State.None;
-        private WebSocketState lastSocketState = WebSocketState.None;
-
-        private bool shouldConnect = false;
 
         private int maxRetries = 5;
 
@@ -84,15 +79,13 @@ namespace BingoSyncExtension
             }, maxRetries, nameof(LoadCookie));
         }
 
-        public void JoinRoom()
+        public void JoinRoom(string room, string password)
         {
             if (GetState() == State.Loading)
             {
                 return;
             }
             forcedState = State.Loading;
-            shouldConnect = true;
-
             var joinRoomInput = new JoinRoomInput
             {
                 Room = room,
@@ -128,7 +121,6 @@ namespace BingoSyncExtension
 
         public void ExitRoom()
         {
-            shouldConnect = false;
             forcedState = State.Loading;
             RetryHelper.RetryWithExponentialBackoff(() =>
             {
@@ -148,7 +140,7 @@ namespace BingoSyncExtension
             });
         }
 
-        public void NewCard(string customJSON, bool lockout = false, bool hideCard = true)
+        public void NewCard(string room, string customJSON, bool lockout = false, bool hideCard = true)
         {
             var newCard = new NewCard
             {
@@ -166,7 +158,7 @@ namespace BingoSyncExtension
             _ = task.ContinueWith(responseTask => {});
         }
 
-        public void ChatMessage(string text)
+        public void ChatMessage(string room, string text)
         {
             var setColorInput = new ChatMessage
             {

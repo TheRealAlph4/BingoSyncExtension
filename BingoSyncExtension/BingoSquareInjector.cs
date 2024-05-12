@@ -70,7 +70,6 @@ namespace BingoSyncExtension
             }
 
             allSquaresField.SetValue(null, allSquaresList);
-            Log($"Added {squares.Count} new squares");
             
             return goals;
         }

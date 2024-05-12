@@ -14,7 +14,7 @@ namespace BingoSyncExtension
 
         public static LayoutRoot layoutRoot;
         private static Button GenerateBoardButton;
-        private static List<Button> GameModeButtons;
+//        private static List<Button> GameModeButtons;
 
         private static int buttonSize = 100;
         private static int inputSize = buttonSize * 5 + 40;
@@ -54,6 +54,15 @@ namespace BingoSyncExtension
 
         }
 
+        public static void SetupGameModeButtons()
+        {
+
+        }
+
+        public static void SetUIVisible(bool visible)
+        {
+            GenerationUiVisible = visible;
+        }
     }
 
     internal class Hotkeys
