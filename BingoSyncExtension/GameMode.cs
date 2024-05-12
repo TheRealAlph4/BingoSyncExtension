@@ -26,7 +26,6 @@ namespace BingoSyncExtension
             List<BingoGoal> board = [];
             List<BingoGoal> availableGoals = new(goals.Values);
             Random r = new();
-
             while (board.Count < 25) {
                 int index = r.Next(availableGoals.Count);
                 BingoGoal proposedGoal = availableGoals[index];
@@ -45,6 +44,7 @@ namespace BingoSyncExtension
                 availableGoals.Remove(proposedGoal);
                 if(availableGoals.Count == 0)
                 {
+                    Modding.Logger.Log("Could not generate board");
                     return GetErrorBoard();
                 }
             }

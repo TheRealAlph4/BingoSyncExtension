@@ -48,13 +48,11 @@ namespace BingoSyncExtension
         private void ContinueGame(On.UIManager.orig_ContinueGame orig, UIManager self)
         {
             MenuUI.SetUIVisible(false);
-//            ConfigureBingoSyncOnGameStart();
             orig(self);
         }
         private void StartNewGame(On.UIManager.orig_StartNewGame orig, UIManager self, bool permaDeath, bool bossRush)
         {
             MenuUI.SetUIVisible(false);
-//            ConfigureBingoSyncOnGameStart();
             orig(self, permaDeath, bossRush);
         }
     }
