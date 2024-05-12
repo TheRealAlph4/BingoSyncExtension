@@ -51,7 +51,7 @@ namespace BingoSyncExtension
                     Log("Loading...");
                     Thread.Sleep(500);
                 }
-                client.ChatMessage(room, $"{username} is generating an {activeGameMode} board");
+                client.ChatMessage(room, $"{username} is generating a(n) {activeGameMode} board");
                 Thread.Sleep(100);
                 string customJSON = GameMode.GetErrorBoard();
                 if (activeGameMode != string.Empty)
