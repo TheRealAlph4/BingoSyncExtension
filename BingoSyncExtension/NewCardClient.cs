@@ -140,7 +140,7 @@ namespace BingoSyncExtension
             });
         }
 
-        public void NewCard(string room, string customJSON, bool lockout = false, bool hideCard = true)
+        public void NewCard(string room, string customJSON, bool lockout = true, bool hideCard = true)
         {
             var newCard = new NewCard
             {
@@ -148,7 +148,7 @@ namespace BingoSyncExtension
                 Game = 18, // this is supposed to be custom alread
                 Variant = 18, // but this is also required for custom ???
                 CustomJSON = customJSON,
-                Lockout = lockout, // false is lockout here for some godforsaken reason
+                Lockout = !lockout, // false is lockout here for some godforsaken reason
                 Seed = "",
                 HideCard = hideCard,
             };

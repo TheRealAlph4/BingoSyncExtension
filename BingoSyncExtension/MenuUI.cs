@@ -13,35 +13,57 @@ namespace BingoSyncExtension
     public static class MenuUI {
         private static Hotkeys HotkeySettings { get; set; } = new();
 
+        private static readonly int menuWidth = 540; // match BingoSync
+        private static readonly int gameModeButtonSize = (menuWidth - 30) / 3;
+        private static readonly int generateButtonSize = 400;
+        private static readonly int lockoutButtonSize = menuWidth - generateButtonSize - 20;
+
         public static LayoutRoot layoutRoot = new(true, "Persistent layout");
         public static StackLayout layout = new(layoutRoot)
-            {
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Bottom,
-                Spacing = 10,
-                Orientation = Orientation.Vertical,
-                Padding = new Padding(0, 50, 20, 0),
-            };
-        private static Button GenerateBoardButton;
-        private static List<Button> GameModeButtons = [];
-
-        private static readonly int buttonSize = 173;
-        private static readonly int inputSize = buttonSize * 3 + 20;
+        {
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Spacing = 15,
+            Orientation = Orientation.Vertical,
+            Padding = new Padding(0, 50, 20, 15),
+        };
+        private static readonly Button GenerateBoardButton = new(layoutRoot, "generateBoardButton")
+        {
+            Content = "Generate Board",
+            FontSize = 22,
+            Margin = 20,
+            MinWidth = generateButtonSize,
+            MinHeight = 50,
+        };
+        private static readonly Button LockoutToggleButton = new(layoutRoot, "lockoutToggleButton")
+        {
+            Content = "Lockout",
+            FontSize = 15,
+            Margin = 20,
+            MinWidth = lockoutButtonSize,
+            MinHeight = 50,
+        };
+        private static readonly List<Button> GameModeButtons = [];
 
         private static bool GenerationUiVisible = true;
 
         public static void Setup()
         {
-            GenerateBoardButton = new(layoutRoot, "generateBoardButton")
-            {
-                Content = "Generate Board",
-                FontSize = 22,
-                Margin = 20,
-                MinWidth = inputSize,
-            };
             GenerateBoardButton.Click += GameModesManager.Generate;
 
-            layout.Children.Add(GenerateBoardButton);
+            StackLayout bottomRow = new(layoutRoot)
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Spacing = 10,
+                Orientation = Orientation.Horizontal,
+            };
+
+            bottomRow.Children.Add(GenerateBoardButton);
+            bottomRow.Children.Add(LockoutToggleButton);
+
+
+            layout.Children.Add(bottomRow);
 
             layoutRoot.VisibilityCondition = () => {
                 return GenerationUiVisible;
@@ -100,7 +122,7 @@ namespace BingoSyncExtension
                 Content = name,
                 FontSize = 15,
                 Margin = 20,
-                MinWidth = buttonSize,
+                MinWidth = gameModeButtonSize,
             };
             button.Click += SelectGameMode;
             return button;

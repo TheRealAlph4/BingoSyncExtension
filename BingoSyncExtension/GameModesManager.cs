@@ -14,10 +14,11 @@ namespace BingoSyncExtension
         private static readonly List<GameMode> _gameModes = [];
         private static readonly Dictionary<string, BingoGoal> _vanillaGoals = [];
         private static string activeGameMode = string.Empty;
+        private static bool lockout = true;
+
         public static string room = string.Empty;
         public static string username = string.Empty;
         public static string password = string.Empty;
-
         public static void Setup(Action<string> log)
         {
             Log = log;
@@ -50,6 +51,11 @@ namespace BingoSyncExtension
             activeGameMode = gameMode;
         }
 
+        public static void SetLockout(bool input)
+        {
+            lockout = input;
+        }
+
         public static void Generate(Button sender)
         {
             ExtractSessionInfo();
@@ -62,14 +68,15 @@ namespace BingoSyncExtension
                     Log("Loading...");
                     Thread.Sleep(500);
                 }
-                client.ChatMessage(room, $"{username} is generating a(n) {activeGameMode} board");
+                string lockoutString = lockout ? "lockout" : "non-lockout";
+                client.ChatMessage(room, $"{username} is generating a(n) {activeGameMode} board in {lockoutString} mode");
                 Thread.Sleep(100);
                 string customJSON = GameMode.GetErrorBoard();
                 if (activeGameMode != string.Empty)
                 {
                     customJSON = _gameModes.Find(gameMode => gameMode.GetName() == activeGameMode).GenerateBoard();
                 }
-                client.NewCard(room, customJSON);
+                client.NewCard(room, customJSON, lockout);
                 Thread.Sleep(1000);
                 client.ExitRoom();
             });
