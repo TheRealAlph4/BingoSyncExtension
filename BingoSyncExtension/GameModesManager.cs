@@ -51,6 +51,11 @@ namespace BingoSyncExtension
             activeGameMode = gameMode;
         }
 
+        public static bool GetLockout()
+        {
+            return lockout;
+        }
+
         public static void SetLockout(bool input)
         {
             lockout = input;
@@ -69,7 +74,7 @@ namespace BingoSyncExtension
                     Thread.Sleep(500);
                 }
                 string lockoutString = lockout ? "lockout" : "non-lockout";
-                client.ChatMessage(room, $"{username} is generating a(n) {activeGameMode} board in {lockoutString} mode");
+                client.ChatMessage(room, $"{username} is generating {Anify(activeGameMode)} board in {lockoutString} mode");
                 Thread.Sleep(100);
                 string customJSON = GameMode.GetErrorBoard();
                 if (activeGameMode != string.Empty)
@@ -154,6 +159,15 @@ namespace BingoSyncExtension
         public static Dictionary<string, BingoGoal> GetVanillaGoals()
         {
             return _vanillaGoals;
+        }
+
+        private static string Anify(string word)
+        {
+            if (new List<string> { "a", "e", "i", "o", "u" }.Contains(word.Substring(0, 1).ToLower()))
+            {
+                return "an " + word;
+            }
+            return "a " + word;
         }
     }
 }

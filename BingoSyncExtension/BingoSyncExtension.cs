@@ -34,6 +34,7 @@ namespace BingoSyncExtension
             if (cg.name == "MainMenuScreen")
             {
                 MenuUI.SetUIVisible(true);
+                MenuUI.SetGenerateButtonEnabled(true);
             }
             return orig(self, cg);
         }
@@ -42,17 +43,20 @@ namespace BingoSyncExtension
             if (cg.name == "MainMenuScreen")
             {
                 MenuUI.SetUIVisible(false);
+                MenuUI.SetGenerateButtonEnabled(false);
             }
             return orig(self, cg);
         }
         private void ContinueGame(On.UIManager.orig_ContinueGame orig, UIManager self)
         {
             MenuUI.SetUIVisible(false);
+            MenuUI.SetGenerateButtonEnabled(false);
             orig(self);
         }
         private void StartNewGame(On.UIManager.orig_StartNewGame orig, UIManager self, bool permaDeath, bool bossRush)
         {
             MenuUI.SetUIVisible(false);
+            MenuUI.SetGenerateButtonEnabled(false);
             orig(self, permaDeath, bossRush);
         }
     }

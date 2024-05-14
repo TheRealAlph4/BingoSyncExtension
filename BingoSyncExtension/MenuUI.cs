@@ -15,7 +15,7 @@ namespace BingoSyncExtension
 
         private static readonly int menuWidth = 540; // match BingoSync
         private static readonly int gameModeButtonSize = (menuWidth - 30) / 3;
-        private static readonly int generateButtonSize = 400;
+        private static readonly int generateButtonSize = 350;
         private static readonly int lockoutButtonSize = menuWidth - generateButtonSize - 20;
 
         public static LayoutRoot layoutRoot = new(true, "Persistent layout");
@@ -50,6 +50,7 @@ namespace BingoSyncExtension
         public static void Setup()
         {
             GenerateBoardButton.Click += GameModesManager.Generate;
+            LockoutToggleButton.Click += ToggleLockout;
 
             StackLayout bottomRow = new(layoutRoot)
             {
@@ -126,7 +127,6 @@ namespace BingoSyncExtension
             };
             button.Click += SelectGameMode;
             return button;
-
         }
 
         public static void SelectGameMode(Button sender)
@@ -142,6 +142,24 @@ namespace BingoSyncExtension
         public static void SetUIVisible(bool visible)
         {
             GenerationUiVisible = visible;
+        }
+
+        public static void ToggleLockout(Button sender)
+        {
+            bool lockout = !GameModesManager.GetLockout();
+            GameModesManager.SetLockout(lockout);
+            string text = "Lockout";
+            if (!lockout)
+            {
+                text = "Non-Lockout";
+            }
+            sender.Content = text;
+        }
+
+        public static void SetGenerateButtonEnabled(bool enabled)
+        {
+            Modding.Logger.Log($"Setting generate button {enabled}");
+            GenerateBoardButton.Enabled = enabled;
         }
     }
 
