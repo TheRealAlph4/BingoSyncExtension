@@ -15,6 +15,7 @@ namespace BingoSyncExtension
 
             const string steam = "hollow_knight_Data";
             const string GOG = "Hollow Knight_Data";
+            const string linuxSteam = "hollow_knight_data";
             if (Directory.Exists($".\\{steam}\\"))
             {
                 HKDataFolder = steam;
@@ -22,6 +23,10 @@ namespace BingoSyncExtension
             else if (Directory.Exists($".\\{GOG}\\"))
             {
                 HKDataFolder = GOG;
+            }
+            else if(Directory.Exists($"./{linuxSteam}/"))
+            {
+                HKDataFolder = linuxSteam;
             }
             else
             {
