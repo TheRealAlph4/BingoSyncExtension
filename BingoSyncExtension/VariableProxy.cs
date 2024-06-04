@@ -14,7 +14,6 @@ namespace BingoSyncExtension
         public static void Setup(Action<string> log)
         {
             Log = log;
-            Log(BingoSquareInjector._bingoSyncAssembly.FullName);
             _bingoTrackerType = BingoSquareInjector._bingoSyncAssembly.GetType("BingoSync.BingoTracker");
         }
 

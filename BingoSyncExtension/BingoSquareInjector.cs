@@ -35,14 +35,8 @@ namespace BingoSyncExtension
         public static void Setup(Action<string> log)
         {
             Log = log;
-            Log("getting bingosync");
-            foreach(IMod loadedmod in ModHooks.GetAllMods())
-            {
-                Log(loadedmod.GetName());
-            }
             if (ModHooks.GetMod("BingoSync") is { } mod)
             {
-                Log("setting up stuff");
                 SetupReflection(mod);
             }
         }
@@ -79,6 +73,8 @@ namespace BingoSyncExtension
             FieldInfo allSquaresField = _bingoTrackerType.GetField("_allPossibleSquares", BindingFlags.NonPublic | BindingFlags.Static);
             IList allSquaresList = (IList) allSquaresField.GetValue(null);
 
+            DepluralizePeaksGoals(allSquaresList);
+
             foreach (LocalBingoSquare square in squares)
             {
                 goals.Add(square.Name, new BingoGoal(square.Name, []));
@@ -88,6 +84,15 @@ namespace BingoSyncExtension
             allSquaresField.SetValue(null, allSquaresList);
             
             return goals;
+        }
+
+        private static void DepluralizePeaksGoals(IList allSquaresList)
+        {
+            foreach (object square in allSquaresList)
+            {
+                string oldName = (string) _bingoSquareNameField.GetValue(square);
+                _bingoSquareNameField.SetValue(square, oldName.Replace("Crystal Peaks", "Crystal Peak"));
+            }
         }
 
         private static object ConvertSquare(LocalBingoSquare square)

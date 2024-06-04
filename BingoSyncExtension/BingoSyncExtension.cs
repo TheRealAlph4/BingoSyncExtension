@@ -16,7 +16,6 @@ namespace BingoSyncExtension
 
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
-            Log(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             BingoSquareInjector.Setup(Log);
             BingoSquareReader.Setup(Log);
             VariableProxy.Setup(Log);
