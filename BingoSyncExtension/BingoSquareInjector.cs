@@ -39,6 +39,10 @@ namespace BingoSyncExtension
             {
                 SetupReflection(mod);
             }
+            else
+            {
+                throw new Exception("BingoSync not found");
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
