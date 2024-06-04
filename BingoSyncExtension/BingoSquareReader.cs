@@ -49,6 +49,7 @@ namespace BingoSyncExtension
         [Obsolete("Deprecated, please use Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) instead")]
         public static string GetHKDataFolderName()
         {
+            Log($"Using manual path to HKData: {HKDataFolder}");
             return HKDataFolder;
         }
     }
