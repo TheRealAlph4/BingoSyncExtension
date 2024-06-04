@@ -1,6 +1,8 @@
 ﻿using Modding;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -9,13 +11,14 @@ namespace BingoSyncExtension
     public class BingoSyncExtension : Mod
     {
         new public string GetName() => "BingoSyncExtension";
-        public override string GetVersion() => "1.1";
+        public override string GetVersion() => "1.1.1";
         public override int LoadPriority() => 0;
 
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
-            BingoSquareReader.Setup(Log);
+            Log(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             BingoSquareInjector.Setup(Log);
+            BingoSquareReader.Setup(Log);
             VariableProxy.Setup(Log);
             GameModesManager.Setup(Log);
             MenuUI.Setup();
@@ -26,6 +29,7 @@ namespace BingoSyncExtension
             On.UIManager.FadeOutCanvasGroup += FadeOut;
 
             ModHooks.FinishedLoadingModsHook += MenuUI.SetupGameModeButtons;
+
 
             Log("Initialized");
         }

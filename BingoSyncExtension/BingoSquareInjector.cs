@@ -1,15 +1,18 @@
-﻿using System;
+﻿using Modding;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace BingoSyncExtension
 {
     public static class BingoSquareInjector
     {
         private static Action<string> Log;
-        private static Assembly _assembly;
+        public static Assembly _bingoSyncAssembly;
         private static Type _bingoTrackerType;
         private static Type _bingoSquareType;
         private static Type _conditionObjType;
@@ -32,15 +35,28 @@ namespace BingoSyncExtension
         public static void Setup(Action<string> log)
         {
             Log = log;
-            string hk_data = BingoSquareReader.GetHKDataFolderName();
-            string path = @$".\{hk_data}\Managed\Mods\BingoSync\BingoSync.dll";
-            _assembly = Assembly.Load(AssemblyName.GetAssemblyName(path));
+            Log("getting bingosync");
+            foreach(IMod loadedmod in ModHooks.GetAllMods())
+            {
+                Log(loadedmod.GetName());
+            }
+            if (ModHooks.GetMod("BingoSync") is { } mod)
+            {
+                Log("setting up stuff");
+                SetupReflection(mod);
+            }
+        }
 
-            _bingoTrackerType = _assembly.GetType("BingoSync.BingoTracker");
-            _bingoSquareType = _assembly.GetType("BingoSync.BingoSquare");
-            _conditionObjType = _assembly.GetType("BingoSync.Condition");
-            _conditionTypeEnumType = _assembly.GetType("BingoSync.ConditionType");
-            _conditionStateEnumType = _assembly.GetType("BingoSync.BingoRequirementState");
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void SetupReflection(IMod mod)
+        {
+            _bingoSyncAssembly = mod.GetType().Assembly;
+
+            _bingoTrackerType = _bingoSyncAssembly.GetType("BingoSync.BingoTracker");
+            _bingoSquareType = _bingoSyncAssembly.GetType("BingoSync.BingoSquare");
+            _conditionObjType = _bingoSyncAssembly.GetType("BingoSync.Condition");
+            _conditionTypeEnumType = _bingoSyncAssembly.GetType("BingoSync.ConditionType");
+            _conditionStateEnumType = _bingoSyncAssembly.GetType("BingoSync.BingoRequirementState");
 
             _bingoSquareNameField = _bingoSquareType.GetField("Name");
             _bingoSquareConditionField = _bingoSquareType.GetField("Condition");

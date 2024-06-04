@@ -41,6 +41,7 @@ namespace BingoSyncExtension
             return squares;
         }
 
+        [Obsolete("Deprecated, please use Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) instead")]
         public static string GetHKDataFolderName()
         {
             return HKDataFolder;

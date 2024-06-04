@@ -13,11 +13,9 @@ namespace BingoSyncExtension
         
         public static void Setup(Action<string> log)
         {
-            string hk_data = BingoSquareReader.GetHKDataFolderName();
-            string path = @$".\{hk_data}\Managed\Mods\BingoSync\BingoSync.dll";
-            _assembly = Assembly.Load(AssemblyName.GetAssemblyName(path));
-            _bingoTrackerType = _assembly.GetType("BingoSync.BingoTracker");
             Log = log;
+            Log(BingoSquareInjector._bingoSyncAssembly.FullName);
+            _bingoTrackerType = BingoSquareInjector._bingoSyncAssembly.GetType("BingoSync.BingoTracker");
         }
 
         public static void TrackVariable(string variableName)

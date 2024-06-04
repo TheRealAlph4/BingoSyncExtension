@@ -90,10 +90,7 @@ namespace BingoSyncExtension
 
         public static void ExtractSessionInfo()
         {
-            string hk_data = BingoSquareReader.GetHKDataFolderName();
-            string path = @$".\{hk_data}\Managed\Mods\BingoSync\BingoSync.dll";
-            Assembly assembly = Assembly.Load(AssemblyName.GetAssemblyName(path));
-            Type bingoSyncClientType = assembly.GetType("BingoSync.BingoSyncClient");
+            Type bingoSyncClientType = BingoSquareInjector._bingoSyncAssembly.GetType("BingoSync.BingoSyncClient");
             FieldInfo roomField = bingoSyncClientType.GetField("room", BindingFlags.Public | BindingFlags.Static);
             FieldInfo nicknameField = bingoSyncClientType.GetField("nickname", BindingFlags.Public | BindingFlags.Static);
             FieldInfo passwordField = bingoSyncClientType.GetField("password", BindingFlags.Public | BindingFlags.Static);
