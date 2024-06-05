@@ -5,12 +5,10 @@ This is a library mod for loading and injecting additional goals and auto-markin
 # Usage
 The method for loading the goals json file is subject to change if I find a better variant, everything else will be backwards-compatible.
 ```cs
-// the "hollow_knight_Data"-folder's name is distinct depending on the install being from steam or GOG
-// for those 2 variants, there's this function to return any one that exists, string.Empty if neither exist
-string hk_data = BingoSquareReader.GetHKDataFolderName();
-string path = @$".\{hk_data}\Managed\Mods\";
+// get the path to your mod folder
+string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 // load the goals from a json file, same format as for BingoSync
-List<LocalBingoSquare> listOfSquares = BingoSquareReader.readFromFile(@$"{path}\<goal_pack_mod>\<goal_pack>.json");
+List<LocalBingoSquare> listOfSquares = BingoSquareReader.readFromFile(@$"{path}{Path.DirectorySeparatorChar}<goal_pack>.json");
 
 // inject them into BingoSync's internal list
 BingoSquareInjector.InjectSquares(listOfSquares);
