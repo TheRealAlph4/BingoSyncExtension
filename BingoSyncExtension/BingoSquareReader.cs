@@ -46,6 +46,19 @@ namespace BingoSyncExtension
             return squares;
         }
 
+        public static List<LocalBingoSquare> ReadFromFile(Stream filestream)
+        {
+            List<LocalBingoSquare> squares = [];
+            using (StreamReader reader = new(filestream))
+            using (JsonTextReader jsonReader = new(reader))
+            {
+                JsonSerializer ser = new();
+                var squaresSer = ser.Deserialize<List<LocalBingoSquare>>(jsonReader);
+                squares.AddRange(squaresSer);
+            }
+            return squares;
+        }
+
         [Obsolete("Deprecated, please use Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) instead")]
         public static string GetHKDataFolderName()
         {

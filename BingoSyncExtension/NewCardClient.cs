@@ -152,22 +152,25 @@ namespace BingoSyncExtension
                 Seed = "",
                 HideCard = hideCard,
             };
-            var payload = JsonConvert.SerializeObject(newCard);
-            var content = new StringContent(payload, Encoding.UTF8, "application/json");
-            var task = client.PostAsync("api/new-card", content);
-            _ = task.ContinueWith(responseTask => {});
+            RetryHelper.RetryWithExponentialBackoff(() =>
+            {
+                var payload = JsonConvert.SerializeObject(newCard);
+                var content = new StringContent(payload, Encoding.UTF8, "application/json");
+                var task = client.PostAsync("api/new-card", content);
+                return task.ContinueWith(responseTask => {});
+            }, maxRetries, nameof(ChatMessage));
         }
 
         public void ChatMessage(string room, string text)
         {
-            var setColorInput = new ChatMessage
+            var chatMessageObject = new ChatMessage
             {
                 Room = room,
                 Text = text,
             };
             RetryHelper.RetryWithExponentialBackoff(() =>
             {
-                var payload = JsonConvert.SerializeObject(setColorInput);
+                var payload = JsonConvert.SerializeObject(chatMessageObject);
                 var content = new StringContent(payload, Encoding.UTF8, "application/json");
                 var task = client.PutAsync("api/chat", content);
                 return task.ContinueWith(responseTask =>

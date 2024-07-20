@@ -90,6 +90,26 @@ namespace BingoSyncExtension
             return goals;
         }
 
+        public static Dictionary<string, BingoGoal> ProcessGoalsFile(Stream filestream)
+        {
+            Dictionary<string, BingoGoal> goals = [];
+            List<LocalBingoSquare> squares = BingoSquareReader.ReadFromFile(filestream);
+            FieldInfo allSquaresField = _bingoTrackerType.GetField("_allPossibleSquares", BindingFlags.NonPublic | BindingFlags.Static);
+            IList allSquaresList = (IList)allSquaresField.GetValue(null);
+
+            DepluralizePeaksGoals(allSquaresList);
+
+            foreach (LocalBingoSquare square in squares)
+            {
+                goals.Add(square.Name, new BingoGoal(square.Name, []));
+                allSquaresList.Add(ConvertSquare(square));
+            }
+
+            allSquaresField.SetValue(null, allSquaresList);
+
+            return goals;
+        }
+
         private static void DepluralizePeaksGoals(IList allSquaresList)
         {
             foreach (object square in allSquaresList)
