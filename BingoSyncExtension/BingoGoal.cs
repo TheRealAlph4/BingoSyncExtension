@@ -7,10 +7,10 @@ namespace BingoSyncExtension
         public string name;
         public List<string> exclusions;
 
-        public BingoGoal(string name)
+        public BingoGoal(string goalName)
         {
-            this.name = name;
-            this.exclusions = new();
+            name = goalName;
+            exclusions = [];
         }
 
         public BingoGoal(string name, List<string> exclusions)

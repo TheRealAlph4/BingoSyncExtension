@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace BingoSyncExtension
 {
+    [Obsolete("Deprecated, use BingoSync.CustomGoals.GameMode instead")]
     public class GameMode(string name, Dictionary<string, BingoGoal> goals)
     {
         private readonly string name = name;

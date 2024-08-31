@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace BingoSyncExtension
 {
-    public class NewCardClient
+    class NewCardClient
     {
         public enum State
         {

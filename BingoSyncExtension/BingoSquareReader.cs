@@ -35,6 +35,11 @@ namespace BingoSyncExtension
         }
         public static List<LocalBingoSquare> ReadFromFile(string filepath)
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return [];
+            }
+
             List<LocalBingoSquare> squares = [];
             using (StreamReader reader = new(filepath))
             using (JsonTextReader jsonReader = new(reader))
@@ -48,6 +53,11 @@ namespace BingoSyncExtension
 
         public static List<LocalBingoSquare> ReadFromFile(Stream filestream)
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return [];
+            }
+
             List<LocalBingoSquare> squares = [];
             using (StreamReader reader = new(filestream))
             using (JsonTextReader jsonReader = new(reader))

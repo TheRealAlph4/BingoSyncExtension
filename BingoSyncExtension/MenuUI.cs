@@ -13,6 +13,7 @@ namespace BingoSyncExtension
     public static class MenuUI {
         private static Hotkeys HotkeySettings { get; set; } = new();
 
+        /*
         private static readonly int menuWidth = 540; // match BingoSync
         private static readonly int gameModeButtonSize = (menuWidth - 30) / 3;
         private static readonly int generateButtonSize = 350;
@@ -161,6 +162,7 @@ namespace BingoSyncExtension
             Modding.Logger.Log($"Setting generate button {enabled}");
             GenerateBoardButton.Enabled = enabled;
         }
+        */
     }
 
     internal class Hotkeys
@@ -173,6 +175,11 @@ namespace BingoSyncExtension
         public PlayerAction HideUI;
         public HideKeybind()
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return;
+            }
+
             HideUI = CreatePlayerAction("HideBoardGenerationUI");
             HideUI.AddDefaultBinding(Key.H);
         }

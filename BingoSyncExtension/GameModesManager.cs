@@ -28,6 +28,12 @@ namespace BingoSyncExtension
 
         public static void AddGameMode(GameMode gameMode)
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return;
+            }
+
+
             _gameModes.Add(gameMode);
         }
 
@@ -38,6 +44,11 @@ namespace BingoSyncExtension
 
         public static List<string> GameModeNames()
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return [];
+            }
+
             List<string> names = [];
             foreach(GameMode gameMode in _gameModes)
             {
@@ -48,6 +59,11 @@ namespace BingoSyncExtension
 
         public static void SetActiveGameMode(string gameMode)
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return;
+            }
+
             activeGameMode = gameMode;
         }
 
@@ -63,6 +79,11 @@ namespace BingoSyncExtension
 
         public static void Generate(Button sender)
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return;
+            }
+
             ExtractSessionInfo();
             Log("Generate button clicked");
             Thread boardSenderThread = new(() => {
@@ -101,6 +122,11 @@ namespace BingoSyncExtension
 
         private static void SetupVanillaGoals()
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return;
+            }
+
             List<string> goals = ["Abyss Shriek", "All Grubs: Greenpath (4) + Fungal (2)", "All Grubs: Xroads (5) + Fog Canyon (1)", "Break the 420 geo rock in Kingdom's Edge", "Broken Vessel", "Buy 6 map pins from Iselda (All but two)", "Buy 6 maps", "Buy 8 map pins from Iselda (All)", "Collect 1 Arcane Egg", "Collect 3 King's Idols", "Collect 500 essence", "Collector", "Colosseum 1", "Complete 4 full dream trees", "Crystal Guardian 1", "Crystal Guardian 2", "Crystal Heart", "Cyclone Slash", "Dash Slash", "Deep Focus + Quick Focus", "Defeat Colosseum Zote", "Descending Dark", "Desolate Dive", "Dream Gate", "Dream Nail", "Dream Wielder", "Dung Defender", "Elder Hu", "Failed Champion", "False Knight + Brooding Mawlek", "Flukemarm", "Flukenest", "Fragile Heart, Greed, and Strength", "Galien", "Give Flower to Elderbug", "Glowing Womb + Grimmchild", "Goam and Garpede Journal Entries", "Gorb", "Great Slash", "Grubsong", "Have 1500 geo in the bank", "Have 2 Pale Ore", "Have 4 Rancid Eggs", "Have 5 Hallownest Seals", "Have 5 Wanderer's Journals", "Heavy Blow + Steady Body", "Herrah", "Hive Knight", "Hiveblood", "Hornet 2", "Howling Wraiths", "Interact with 5 Cornifer locations", "Isma's Tear", "Kill 2 Soul Warriors", "Kill 4 Mimics", "Kill 6 different Stalking Devouts", "Kill Myla", "Kill your shade in Jiji's Hut", "Lifeblood Heart + Joni's Blessing", "Longnail + MoP", "Lost Kin", "Lumafly Lantern", "Lurien", "Mantis Lords", "Markoth", "Marmu", "Mask Shard  in the Hive", "Monarch Wings", "Monomon", "Nail 2", "Nail 3", "No Eyes", "Nosk", "Obtain 1 extra mask", "Obtain 1 extra soul vessel", "Obtain 2 extra masks", "Obtain 3 extra notches", "Obtain fountain vessel fragment", "Pale Lurker", "Parry Revek 3 times without dying (Glade of Hope Guard)", "Pay for 6 tolls", "Pick up the Love Key", "Quick Slash", "Rescue Bretta + Sly", "Rescue Zote in Deepnest", "Save 15 grubs", "Save 20 grubs", "Save the 3 grubs in Queen's Garden", "Save the 3 grubs in Waterways", "Save the 5 grubs in CoT", "Save the 5 grubs in Deepnest", "Save the 7 grubs in Crystal Peak", "Shade Cloak", "Shade Soul", "Shape of Unn", "Sharp Shadow", "Soul Master", "Soul Tyrant", "Spell Twister + Shaman Stone", "Spend 3000 geo", "Spend 4000 geo", "Spend 5000 geo", "Sprintmaster + Dashmaster", "Stag Nest vessel fragment", "Take a bath in all 4 Hot Springs", "Talk to Bardoon", "Talk to Emilitia (shortcut out of sewers)", "Talk to Hornet at CoT Statue + Herrah", "Talk to Lemm with Crest Equipped", "Talk to Mask Maker", "Talk to Midwife", "Talk to the Fluke Hermit", "Thorns of agony + Baldur Shell + Spore Shroom", "Traitor Lord", "Tram Pass + Visit all 5 Tram Stations", "Unlock Deepnest Stag", "Unlock Hidden Stag Station", "Unlock Queen's Garden Stag", "Unlock Queen's Stag + King's Stag Stations", "Upgrade Grimmchild once", "Use 2 Simple Keys", "Use City Crest + Ride both CoT large elevators", "Uumuu", "Vengefly King + Massive Moss Charger", "Void Tendrils Journal Entry", "Watch Cloth Die", "Watcher Knights", "Weaversong", "Xero"];
             foreach(string goal in goals)
             {

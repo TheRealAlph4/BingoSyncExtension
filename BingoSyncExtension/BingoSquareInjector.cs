@@ -72,6 +72,11 @@ namespace BingoSyncExtension
 
         public static Dictionary<string, BingoGoal> ProcessGoalsFile(string filepath)
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return [];
+            }
+
             Dictionary<string, BingoGoal> goals = [];
             List<LocalBingoSquare> squares = BingoSquareReader.ReadFromFile(filepath);
             FieldInfo allSquaresField = _bingoTrackerType.GetField("_allPossibleSquares", BindingFlags.NonPublic | BindingFlags.Static);
@@ -92,6 +97,11 @@ namespace BingoSyncExtension
 
         public static Dictionary<string, BingoGoal> ProcessGoalsFile(Stream filestream)
         {
+            if (BingoSyncExtension.deprecated)
+            {
+                return [];
+            }
+
             Dictionary<string, BingoGoal> goals = [];
             List<LocalBingoSquare> squares = BingoSquareReader.ReadFromFile(filestream);
             FieldInfo allSquaresField = _bingoTrackerType.GetField("_allPossibleSquares", BindingFlags.NonPublic | BindingFlags.Static);
